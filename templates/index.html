@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard Logs SSH</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Dashboard Logs SSH</h1>
+        <p>Nombre de logs traitées: {{ nbLogs }} logs</p>
+        <ul>
+        {% for u in users %}
+            <li> {{ u }}</li>
+        {% endfor %}
+        </ul>
+        <table border="1">
+            <tr><th>Date</th><th>Pid</th></tr>
+            {% for d in tabDico %}
+                <tr><td>{{ d.date }}</td><td>{{ d.pid }}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+
+</html>

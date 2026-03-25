@@ -1,4 +1,9 @@
 from datetime import datetime
+from flask import Flask, request, render_template, redirect, session, g
+
+app = Flask(__name__)
+app.secret_key = "monsupersecretintrouvable"     
+
 def charger_logs(chemin_fichier):
     liste = []
     with open(chemin_fichier , "r") as fichier:
@@ -39,9 +44,27 @@ def extraire_attaquant(liste_logs):
             max = dico[badIp]
             worstIp = badIp
     return worstIp , max
-            
-########################  MAIN    #########################
-listeLogs = charger_logs("auth.log")
 
-ip,nb =  extraire_attaquant(listeLogs)
-print (ip,nb)
+def lister_utilisateurs(lLog):
+    listeUsername = []
+    for connexion in lLog :
+        if " password for " in connexion["message"] :
+            username =  connexion["message"].split( " password for ")[1].split(" from ")[0]
+            if username not in listeUsername :
+                listeUsername.append(username)
+    return listeUsername
+
+# -----------------------------
+# Home
+# -----------------------------
+@app.route("/")
+def home():
+    tabDico = charger_logs("auth.log")
+    listeUsers = lister_utilisateurs( tabDico)
+    return render_template("index.html", nbLogs = len(tabDico) , users = listeUsers , tabDico = tabDico)
+    
+#############   MAIN ######################
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
